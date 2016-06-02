@@ -1,29 +1,73 @@
 classdef NetModel < handle
-    properties
-        ShowThreshold = 0.5;
+    properties (Access = public)
+        %Input Variable
+        ShowThreshold
+        %NumChannel
+        LabelChannel
         
-        
+        %Internal Variable
+        LabelAllChannel
+
+        FlagChannelVisable
     end
+    
+    properties (Access = public, Dependent = true)
+
+    end
+    
+    properties (Access = private)
+        
+
+    end
+    
+    
     methods
         function nmobj = NetModel(varargin)
             
             ArgValidation = inputParser;
-            defaultHeight = 1;
-            defaultUnits = 'inches';
-            defaultShape = 'rectangle';
-            expectedShapes = {'square','rectangle','parallelogram'};
+            ArgValidation.CaseSensitive = false;
+            ArgValidation.FunctionName = 'NetModelCreator';
+            ArgValidation.PartialMatching = true;
+            
+            
+            
+            DefaultShowThreshold = 0.5;
+            load ChannelInfo.mat;
+            nmobj.LabelAllChannel = ChannelInfo.Label;
+            DefaultLabelChannel = ChannelInfo.Label;
+            
+            DefaultFlagChannnelVisable = true(size(ChannelInfo.Label));
+          
+            
+%             expectedShapes = {'square','rectangle','parallelogram'};
             
             %             addRequired(ArgValidation,'width',@isnumeric);
             %             addOptional(ArgValidation,'height',defaultHeight,@isnumeric);
-            addParameter(p,'nickname','-',@(x)validateattributes(x,...
-                {'char'},{'nonempty'}))
-            addParameter(ArgValidation,'units',defaultUnits);
-            addParameter(ArgValidation,'shape',defaultShape,...
-                @(x) any(validatestring(x,expectedShapes)));
+            addParameter(ArgValidation,'ShowThreshold',DefaultShowThreshold,@(x)validateattributes(x,...
+                {'numeric'},{'>=','0','<=','1'}))
             
-            parse(ArgValidation,width,varargin{:});
-            a = ArgValidation.Results.width .* ArgValidation.Results.height;
+            %             addParameter(ArgValidation,'NumChannel',DefaultShowThreshold,@(x)validateattributes(x,...
+            %                 {'numeric'},{'integer','>=','2','<=','62'}))
+            addParameter(ArgValidation,'LabelChannel',DefaultFlagVisable ,@(x)iscellstr(x));
+            addParameter(ArgValidation,'FlagChannelVisable',DefaultFlagVisable ,@(x)validateattributes(x,...
+                {'logical'}));
             
+            
+            parse(ArgValidation,varargin{:});
+            
+            nmobj.ShowThreshold = ArgValidation.Results.ShowThreshold;
+            
+            if ismember(lower(ArgValidation.Results.LabelChannel),lower(DefaultLabelAllChannel))
+                nmobj.LabelChannel = ArgValidation.Results.LabelChannel;
+            else
+                error('Illegal input argument ''LabelChannel''.');
+            end
+            if numel(ArgValidation.Results.FlagChannelVisable) == numel(LabelChannel)
+                nmobj.FlagChannelVisable = ArgValidation.Results.FlagChannelVisable;
+            else
+                error('Illegal input argument ''FlagChannelVisable''.');  
+            end
+
         end
     end
     
