@@ -44,7 +44,7 @@ classdef NetModel < handle
             %             addRequired(ArgValidation,'width',@isnumeric);
             %             addOptional(ArgValidation,'height',defaultHeight,@isnumeric);
             addParameter(ArgValidation,'ShowThreshold',DefaultShowThreshold,@(x)validateattributes(x,...
-                {'numeric'},{'>=','0','<=','1'}))
+                {'numeric'},{'>=',0,'<=',1,'numel',1}))
             
             %             addParameter(ArgValidation,'NumChannel',DefaultShowThreshold,@(x)validateattributes(x,...
             %                 {'numeric'},{'integer','>=','2','<=','62'}))
