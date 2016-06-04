@@ -12,6 +12,8 @@ classdef ApplyVerizon < handle
         ComponentSizeX
         ComponentSizeY
         
+        NumComponent
+        
         
     end
     properties (Access = private)
@@ -25,39 +27,12 @@ classdef ApplyVerizon < handle
     
     properties(Dependent)
         %Output Variable
-        NumComponent
+        
         ComponentPosition
     end
     
     methods
         function avobj = ApplyVerizon(varargin)
-            
-            avobj.InputArgValidation(varargin);
-            avobj.NumComponent  = numel(avobj.ComponentSizeX);
-            
-        end
-        
-        function ComponentPosition = get.ComponentPosition(avobj)
-            if strcmpi(avobj.ApplyDirection,'Horizontal');
-                
-                avobj.ComponentNormalizePosition = CalPosHorizontal(avobj);
-                
-            elseif strcmpi(avobj.ApplyDirection,'Vertical');
-                
-                avobj.ComponentNormalizePosition = CalPosVertical(avobj);
-                
-            end
-            
-            ComponentPosition = Normal2Pixel(avobj);
-            
-        end
-        
-        
-    end
-    
-    methods(Access = private)
-        
-        function avobj =  InputArgValidation(varargin)
             
             ArgValidation = inputParser;
             ArgValidation.CaseSensitive = false;
@@ -116,15 +91,38 @@ classdef ApplyVerizon < handle
             end
             
             
+            
+            avobj.NumComponent  = numel(avobj.ComponentSizeX);
+            
         end
         
+        function ComponentPosition = get.ComponentPosition(avobj)
+            if strcmpi(avobj.ApplyDirection,'Horizontal');
+                
+                avobj.ComponentNormalizePosition = CalPosHorizontal(avobj);
+                
+            elseif strcmpi(avobj.ApplyDirection,'Vertical');
+                
+                avobj.ComponentNormalizePosition = CalPosVertical(avobj);
+                
+            end
+            
+            ComponentPosition = Normal2Pixel(avobj);
+            
+        end
+        
+        
+    end
+    
+    methods(Access = private)
+
         function avobj = CalPosVertical(avobj)
             
             TopDownMargin = (1-sum(avobj.ComponentSizeY))/(avobj.NumComponent+1)*avobj.ExternalMargin;
             MiddleMargin = (1-sum(avobj.ComponentSizeY))/(avobj.NumComponent+1)*avobj.InternalMargin;
             
-            ny = reshape([avobj.ComponentSizeY(1:end-1);repmat(MiddleMargin,1,avobj.NumComponent-1)],1,[]);
-            ny = [TopDownMargin,ny,avobj.ComponentSizeY(end),TopDownMargin];
+            ny = reshape([avobj.ComponentSizeY(1:end-1);MiddleMargin],1,[]);
+            ny = [TopDownMargin(1),ny,avobj.ComponentSizeY(end),TopDownMargin(2)];
             
             ny = cumsum(ny(1:end-1));
             
@@ -162,8 +160,8 @@ classdef ApplyVerizon < handle
             LeftRightMargin = (1-sum(avobj.ComponentSizeX))/(avobj.NumComponent+1)*avobj.ExternalMargin;
             MiddleMargin = (1-sum(avobj.ComponentSizeX))/(avobj.NumComponent+1)*avobj.InternalMargin;
             
-            nx = reshape([avobj.ComponentSizeX(1:end-1);repmat(MiddleMargin,1,avobj.NumComponent-1)],1,[]);
-            nx = [LeftRightMargin,nx,avobj.ComponentSizeX(end),LeftRightMargin];
+            nx = reshape([avobj.ComponentSizeX(1:end-1);MiddleMargin],1,[]);
+            nx = [LeftRightMargin(1),nx,avobj.ComponentSizeX(end),LeftRightMargin(2)];
             
             nx= cumsum(nx(1:end-1));
             
@@ -209,7 +207,7 @@ classdef ApplyVerizon < handle
             ComponentPosition(:,2)  = round(CanvasPosition(2) + CanvasPosition(4)*avobj.ComponentNormalizePosition(:,2));
             ComponentPosition(:,3)  = round(CanvasPosition(3)*avobj.ComponentNormalizePosition(:,3));
             ComponentPosition(:,4)  = round(CanvasPosition(4)*avobj.ComponentNormalizePosition(:,4));
- 
+            
         end
     end
     
