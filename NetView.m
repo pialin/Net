@@ -122,7 +122,7 @@ classdef NetView < matlab.apps.AppBase
             nvobj.Panel1.FontUnits = 'pixels';
             nvobj.Panel1.FontSize = 12;
             nvobj.Panel1.Units = 'pixels';
-            %%
+%%
             % Create Panel2
             
             nvobj.Panel2 = uipanel(nvobj.UIFigure);
@@ -139,7 +139,7 @@ classdef NetView < matlab.apps.AppBase
             nvobj.Panel2.FontUnits = 'pixels';
             nvobj.Panel2.FontSize = 12;
             nvobj.Panel2.Units = 'pixels';
-            %%
+%%
             % Create Panel3
             
             nvobj.Panel3 = uipanel(nvobj.UIFigure);
@@ -249,106 +249,3 @@ end
 
 
 
-
-
-
-
-
-
-
-
-
-
-% classdef NetView < handle
-%     properties
-%         HandleUiFigure;
-%         nmobj;
-%         ncobj;
-%         UiFigureSize;
-%         ScreenSizeX;
-%         ScreenSizeY;
-%     end
-%     methods
-%         function nvobj = NetView()
-% %             (nmobj,varargin)
-% %             if verLessThan('matlab','R2016a')
-% %
-% %             else
-% %
-% %                 nvobj.nmobj = nmobj;
-% %
-% %                 ArgValidation = inputParser;
-% %                 ArgValidation.CaseSensitive = false;
-% %                 ArgValidation.FunctionName = 'NetModelCreator';
-% %                 ArgValidation.PartialMatching = true;
-% %
-% %                 DefaultUiFigureSize = 0.8;
-% %
-% %                 addParameter(ArgValidation,'UiFigureSize',DefaultUiFigureSize,@(x)validateattributes(x,...
-% %                     {'numeric'},{'>=',0,'<=',1,'numel',1}));
-% %
-% %                 parse(ArgValidation,varargin{:});
-% %
-% %                 nvobj.UiFigureSize = ArgValidation.Results.UiFigureSize;
-%
-%                 ScreenSize = get(0,'ScreenSize');
-%                 nvobj.ScreenSizeX = ScreenSize(3);
-%                 nvobj.ScreenSizeY = ScreenSize(4);
-%
-% %                 nvobj.nmobj.addlistener('event',@fcn);
-%                 nvobj.BuildUi();
-% %                 nvobj.ncobj = nvobj.CreateController();
-% %                 nvobj.AttachToController(nvobj.ncobj);
-% %             end
-%         end
-%
-%         function BuildUi(nvobj)
-%             nvobj.UiFigureSize =0.8;
-%
-%
-%             UiFigure.Position = [round((1-nvobj.UiFigureSize)/2*nvobj.ScreenSizeX),...
-%                 round((1-nvobj.UiFigureSize)/2*nvobj.ScreenSizeY),...
-%                 round(nvobj.UiFigureSize*nvobj.ScreenSizeX),...
-%                 round(nvobj.UiFigureSize*nvobj.ScreenSizeY)];
-%
-%
-%             UiFigure.Name = 'NetView';
-%
-%             UiFigure.Units = 'Pixels';
-%             UiFigure.Resize = 'on';
-%
-%
-% %             setAutoResize(nvobj, nvobj.Uifigure.Handle, true)
-%
-%             nvobj.HandleUiFigure = uifigure(UiFigure);
-%             nvobj.HandleUiFigure.SizeChangedFcn = @nvobj.UiFigureSizeChanged;
-% %             % Create Slider
-% %             nvobj.Slider = uislider(nvobj.UIFigure);
-% %             nvobj.Slider.Position = [235 250 150 3];
-% %             nvobj.HandleSlider =
-% %             % Create LabelSlider
-% %             nvobj.LabelSlider = uilabel(nvobj.HandleUiFigure);
-% %             nvobj.LabelSlider.HorizontalAlignment = 'right';
-% %             nvobj.LabelSlider.Position = [181 244 33 15];
-% %             nvobj.LabelSlider.Text = 'Slider';
-%
-%
-%
-%
-%         end
-%
-%
-%         function UiFigureSizeChanged(nvobj)
-%             Position = nvobj.HandleUiFigure.Position;
-%             Position(3) = Position(4)/nvobj.ScreenSizeY*nvobj.ScreenSizeX;
-%             nvobj.HandleUiFigure.Position = Position;
-%         end
-%
-%
-%
-%
-%
-%     end
-%
-%
-% end
