@@ -2,18 +2,38 @@ classdef NetView < matlab.apps.AppBase
     
     % Properties that correspond to nvobj components
     properties (Access = public)
-        UIFigure matlab.ui.Figure % UI Figure
-        Panel1 matlab.ui.container.Panel %Panel1
-        Panel2 matlab.ui.container.Panel %Panel2
-        Panel3 matlab.ui.container.Panel %Panel3
-        LabelDispalyMode matlab.ui.control.Label    
-        ChooseDisplayMode matlab.ui.control.DropDown 
+
         ScreenSizeX
         ScreenSizeY
         InitialFigureSize
         HandleNetModel
         HandleNetController
         PanelGapWidth
+        
+    end
+    
+
+   
+    properties(Access = private)
+        
+        UIFigure matlab.ui.Figure % UI Figure
+        Panel1 matlab.ui.container.Panel %Panel1
+        Panel2 matlab.ui.container.Panel %Panel2
+        Panel3 matlab.ui.container.Panel %Panel3
+        
+        LabelDispalyMode  matlab.ui.control.Label
+        DropDownDispalyMode matlab.ui.control.DropDown
+        LabelSetFreq  matlab.ui.control.Label
+        EditFieldSetFreq matlab.ui.control.EditField
+        LabelSetThreshold  matlab.ui.control.Label
+        SliderSetThreshold matlab.ui.control.Slider
+        ButtonShowAll matlab.ui.control.Button 
+        ButtonHideAll matlab.ui.control.Button 
+        ButtonDefault matlab.ui.control.Button 
+        
+        CalPanel1ComponnetPos ApplyVerizon
+        CalPanel3ComponnetPos ApplyVerizon
+        
     end
     
     methods (Access = private)
@@ -58,28 +78,11 @@ classdef NetView < matlab.apps.AppBase
         
         % UIFigure size change function
         function correctFigureSize(nvobj)
-            position = nvobj.UIFigure.Position;
-            position(3) = position(4)/nvobj.ScreenSizeY*nvobj.ScreenSizeX;
-            nvobj.UIFigure.Position = position;
             
-            
-            nvobj.Panel1.Position = [round(nvobj.UIFigure.Position(3)*nvobj.PanelGapWidth),...
-                round(nvobj.UIFigure.Position(4)*nvobj.PanelGapWidth),...
-                round(nvobj.UIFigure.Position(3)*(2/3)-nvobj.UIFigure.Position(3)*nvobj.PanelGapWidth*1.5),...
-                round(nvobj.UIFigure.Position(4)-nvobj.UIFigure.Position(4)*nvobj.PanelGapWidth*2)];
-            
-            nvobj.Panel2.Position = [round(nvobj.UIFigure.Position(3)*(2/3) + nvobj.UIFigure.Position(3)*nvobj.PanelGapWidth*0.5),...
-                round(nvobj.UIFigure.Position(4)*(1/2) + nvobj.UIFigure.Position(4)*nvobj.PanelGapWidth*0.5),...
-                round(nvobj.UIFigure.Position(3)*(1/3)-nvobj.UIFigure.Position(3)*nvobj.PanelGapWidth*1.5),...
-                round(nvobj.UIFigure.Position(4)*(1/2)-nvobj.UIFigure.Position(4)*nvobj.PanelGapWidth*1.5)];
-            
-            nvobj.Panel3.Position = [round(nvobj.UIFigure.Position(3)*(2/3) + nvobj.UIFigure.Position(3)*nvobj.PanelGapWidth*0.5),...
-                round(nvobj.UIFigure.Position(4)*nvobj.PanelGapWidth),...
-                round(nvobj.UIFigure.Position(3)*(1/3)-nvobj.UIFigure.Position(3)*nvobj.PanelGapWidth*1.5),...
-                round(nvobj.UIFigure.Position(4)*(1/2)-nvobj.UIFigure.Position(4)*nvobj.PanelGapWidth*1.5)];
-            
-            
-            
+            SetFigurePos(nvobj);
+            SetPanelPos(nvobj);
+            SetPanel1ComponentPos(nvobj);
+            SetPanel3ComponentPos(nvobj);
             
         end
     end
@@ -110,95 +113,119 @@ classdef NetView < matlab.apps.AppBase
             
             nvobj.Panel1 = uipanel(nvobj.UIFigure);
             
-            nvobj.Panel1.Position = [round(nvobj.UIFigure.Position(3)*nvobj.PanelGapWidth),...
-                round(nvobj.UIFigure.Position(4)*nvobj.PanelGapWidth),...
-                round(nvobj.UIFigure.Position(3)*(2/3)-nvobj.UIFigure.Position(3)*nvobj.PanelGapWidth*1.5),...
-                round(nvobj.UIFigure.Position(4)-nvobj.UIFigure.Position(4)*nvobj.PanelGapWidth*2)];
-            
             nvobj.Panel1.BorderType = 'none';
             nvobj.Panel1.Title = '网络连接图';
             nvobj.Panel1.TitlePosition = 'lefttop';
-            nvobj.Panel1.FontName = 'Noto Sans CJK SC Bold';
+            nvobj.Panel1.FontName = 'Helvetica';
             nvobj.Panel1.FontUnits = 'pixels';
             nvobj.Panel1.FontSize = 12;
             nvobj.Panel1.Units = 'pixels';
-%%
+            %%
             % Create Panel2
             
             nvobj.Panel2 = uipanel(nvobj.UIFigure);
             
-            nvobj.Panel2.Position = [round(nvobj.UIFigure.Position(3)*(2/3) + nvobj.UIFigure.Position(3)*nvobj.PanelGapWidth*0.5),...
-                round(nvobj.UIFigure.Position(4)*(1/2) + nvobj.UIFigure.Position(4)*nvobj.PanelGapWidth*0.5),...
-                round(nvobj.UIFigure.Position(3)*(1/3)-nvobj.UIFigure.Position(3)*nvobj.PanelGapWidth*1.5),...
-                round(nvobj.UIFigure.Position(4)*(1/2)-nvobj.UIFigure.Position(4)*nvobj.PanelGapWidth*1.5)];
+            
             
             nvobj.Panel2.BorderType = 'none';
             nvobj.Panel2.Title = '控制1';
             nvobj.Panel2.TitlePosition = 'lefttop';
-            nvobj.Panel2.FontName = 'Noto Sans CJK SC Bold';
+            nvobj.Panel2.FontName = 'Helvetica';
             nvobj.Panel2.FontUnits = 'pixels';
             nvobj.Panel2.FontSize = 12;
             nvobj.Panel2.Units = 'pixels';
-%%
+            %%
             % Create Panel3
             
             nvobj.Panel3 = uipanel(nvobj.UIFigure);
             
-            nvobj.Panel3.Position = [round(nvobj.UIFigure.Position(3)*(2/3) + nvobj.UIFigure.Position(3)*nvobj.PanelGapWidth*0.5),...
-                round(nvobj.UIFigure.Position(4)*nvobj.PanelGapWidth),...
-                round(nvobj.UIFigure.Position(3)*(1/3)-nvobj.UIFigure.Position(3)*nvobj.PanelGapWidth*1.5),...
-                round(nvobj.UIFigure.Position(4)*(1/2)-nvobj.UIFigure.Position(4)*nvobj.PanelGapWidth*1.5)];
-            
             nvobj.Panel3.BorderType = 'none';
             nvobj.Panel3.Title = '控制2';
             nvobj.Panel3.TitlePosition = 'lefttop';
-            nvobj.Panel3.FontName = 'Noto Sans CJK SC Bold';
+            nvobj.Panel3.FontName = 'Helvetica';
             nvobj.Panel3.FontUnits = 'pixels';
             nvobj.Panel3.FontSize = 12;
             nvobj.Panel3.Units = 'pixels';
             
-%%
-            % Create LabelDropDown
+            SetPanelPos(nvobj);
+            
+            %%
+            % Create LabelDisplayMode
             nvobj.LabelDispalyMode = uilabel(nvobj.Panel1);
             nvobj.LabelDispalyMode.HorizontalAlignment = 'right';
-            nvobj.LabelDropDown.Position = [76 147 63 15];
-            nvobj.LabelDropDown.Text = 'Drop Down';
-
-            % Create DropDown
-            app.DropDown = uidropdown(app.Panel);
-            app.DropDown.Position = [154 145 100 20];
- %%
-  % Create LabelSlider
-            app.LabelSlider = uilabel(app.Panel);
-            app.LabelSlider.HorizontalAlignment = 'right';
-            app.LabelSlider.Position = [22 125 33 15];
-            app.LabelSlider.Text = 'Slider';
-
-            % Create Slider
-            app.Slider = uislider(app.Panel);
-            app.Slider.Position = [76 131 150 3];
-%%
-% Create LabelEditField
-            app.LabelEditField = uilabel(app.Panel);
-            app.LabelEditField.HorizontalAlignment = 'right';
-            app.LabelEditField.Position = [44 122 52 15];
-            app.LabelEditField.Text = 'Edit Field';
-
-            % Create EditField
-            app.EditField = uieditfield(app.Panel, 'text');
-            app.EditField.Position = [111 118 100 22];
-%%
-            % Create Button
-            app.Button = uibutton(app.Panel, 'push');
-            app.Button.Position = [71 98 100 22];
+            nvobj.LabelDispalyMode.VerticalAlignment = 'center';
+            nvobj.LabelDispalyMode.FontName = 'Helvetica';
+            nvobj.LabelDispalyMode.Text = 'Mode';
             
-%%
- % Create UIAxes
-            app.UIAxes = uiaxes(app.Panel);
-            title(app.UIAxes, 'Title');
-            xlabel(app.UIAxes, 'X');
-            ylabel(app.UIAxes, 'Y');
-            app.UIAxes.Position = [64 109 300 185];
+            % Create DisplayMode
+            nvobj.DropDownDispalyMode = uidropdown(nvobj.Panel1);
+            nvobj.DropDownDispalyMode.FontName = 'Helvetica';
+            
+            %%
+            % Create LabelSetFreq
+            nvobj.LabelSetFreq = uilabel(nvobj.Panel1);
+            nvobj.LabelSetFreq.HorizontalAlignment = 'right';
+            nvobj.LabelSetFreq.VerticalAlignment = 'center';
+            nvobj.LabelSetFreq.FontName = 'Helvetica';
+            nvobj.LabelSetFreq.Text = 'Frequency';
+            
+            % Create SetFreq
+            nvobj.EditFieldSetFreq = uieditfield(nvobj.Panel1, 'text');
+            nvobj.EditFieldSetFreq.FontName = 'Helvetica';
+            
+            %%
+            % Create LabelSetThreshold
+            nvobj.LabelSetThreshold = uilabel(nvobj.Panel1);
+            nvobj.LabelSetThreshold.HorizontalAlignment = 'right';
+            nvobj.LabelSetThreshold.VerticalAlignment = 'center';
+            nvobj.LabelSetThreshold.Text = 'Threshold';
+            nvobj.LabelSetThreshold.FontName = 'Helvetica';
+            % Create SetThreshold
+            nvobj.SliderSetThreshold = uislider(nvobj.Panel1);
+            nvobj.SliderSetThreshold.FontName = 'Helvetica';
+            %             nvobj.SliderSetThreshold.MajorTicksMode = 'manual';
+            %             nvobj.SliderSetThreshold.MajorTickLabels = {'0','0.2','0.4','0.6','0.8','1'};
+            nvobj.SliderSetThreshold.Limits = [0,1];
+            nvobj.SliderSetThreshold.Value = 0.5;
+            %             nvobj.SliderSetThreshold.MinorTicks = linspace(0,1,11);
+            
+            nvobj.CalPanel1ComponnetPos = ApplyVerizon('ParentPosition',nvobj.Panel1.Position,'CanvasArea',[0.8,0.8,0.2,0.2],...
+                'ApplyDirection','Vertical','AlignWay','Center','AlignLine',0.5,...
+                'InternalMargin',1,'ExternalMargin',1,'ComponentSizeX',[0.9,0.9,0.9],...
+                'ComponentSizeY',[0.25,0.2,0.25]);
+            
+            SetPanel1ComponentPos(nvobj);
+            %%
+            % Create 'Show All'Button
+            nvobj.ButtonShowAll = uibutton(nvobj.Panel3, 'push');
+            nvobj.ButtonShowAll.Text = 'Show All';
+            
+            % Create 'Hide All'Button
+            nvobj.ButtonHideAll = uibutton(nvobj.Panel3, 'push');
+            nvobj.ButtonHideAll.Text = 'Hide All';
+            
+            % Create 'Default'Button
+            nvobj.ButtonDefault = uibutton(nvobj.Panel3, 'push');
+            nvobj.ButtonDefault.Text = 'Default';
+            
+            
+            nvobj.CalPanel3ComponnetPos = ApplyVerizon('ParentPosition',nvobj.Panel3.Position,'CanvasArea',[0,0,1,1],...
+                'ApplyDirection','Vertical','AlignWay','Center','AlignLine',0.5,...
+                'InternalMargin',0.5,'ExternalMargin',1.5,'ComponentSizeX',[0.5,0.5,0.5],...
+                'ComponentSizeY',[0.1,0.1,0.1]);
+            
+            nvobj = SetPanel3ComponentPos(nvobj);
+            
+            
+            %             nvobj.Button.Position = [71 98 100 22];
+            %
+            %             %%
+            %             % Create UIAxes
+            %             nvobj.UIAxes = uiaxes(nvobj.Panel);
+            %             title(nvobj.UIAxes, 'Title');
+            %             xlabel(nvobj.UIAxes, 'X');
+            %             ylabel(nvobj.UIAxes, 'Y');
+            %             nvobj.UIAxes.Position = [64 109 300 185];
             
             
             
@@ -235,17 +262,87 @@ classdef NetView < matlab.apps.AppBase
             % Delete UIFigure when nvobj is deleted
             delete(nvobj.UIFigure);
         end
+        
+    end
+    
+    methods (Access = private)
+        function nvobj = SetFigurePos(nvobj)
+            
+            position = nvobj.UIFigure.Position;
+            position(3) = position(4)/nvobj.ScreenSizeY*nvobj.ScreenSizeX;
+            nvobj.UIFigure.Position = position;
+            
+        end
+        
+        function nvobj = SetPanelPos(nvobj)
+            nvobj.Panel1.Position = [round(nvobj.UIFigure.Position(3)*nvobj.PanelGapWidth),...
+                round(nvobj.UIFigure.Position(4)*nvobj.PanelGapWidth),...
+                round(nvobj.UIFigure.Position(3)*(2/3)-nvobj.UIFigure.Position(3)*nvobj.PanelGapWidth*1.5),...
+                round(nvobj.UIFigure.Position(4)-nvobj.UIFigure.Position(4)*nvobj.PanelGapWidth*2)];
+            
+            nvobj.Panel2.Position = [round(nvobj.UIFigure.Position(3)*(2/3) + nvobj.UIFigure.Position(3)*nvobj.PanelGapWidth*0.5),...
+                round(nvobj.UIFigure.Position(4)*(1/2) + nvobj.UIFigure.Position(4)*nvobj.PanelGapWidth*0.5),...
+                round(nvobj.UIFigure.Position(3)*(1/3)-nvobj.UIFigure.Position(3)*nvobj.PanelGapWidth*1.5),...
+                round(nvobj.UIFigure.Position(4)*(1/2)-nvobj.UIFigure.Position(4)*nvobj.PanelGapWidth*1.5)];
+            
+            
+            nvobj.Panel3.Position = [round(nvobj.UIFigure.Position(3)*(2/3) + nvobj.UIFigure.Position(3)*nvobj.PanelGapWidth*0.5),...
+                round(nvobj.UIFigure.Position(4)*nvobj.PanelGapWidth),...
+                round(nvobj.UIFigure.Position(3)*(1/3)-nvobj.UIFigure.Position(3)*nvobj.PanelGapWidth*1.5),...
+                round(nvobj.UIFigure.Position(4)*(1/2)-nvobj.UIFigure.Position(4)*nvobj.PanelGapWidth*1.5)];
+            
+            
+        end
+        
+        function nvobj = SetPanel1ComponentPos(nvobj)
+            
+           nvobj.CalPanel1ComponnetPos.ParentPosition = nvobj.Panel1.Position;
+            ComponentPos = nvobj.CalPanel1ComponnetPos.ComponentPosition;
+            %因为Panel上方有标题
+            ComponentPos(:,2) = ComponentPos(:,2) - 20;
+            LabelPos(:,1) = round(ComponentPos(:,1) - nvobj.Panel1.Position(3) * 0.1);
+            LabelPos(:,2) = ComponentPos(:,2);
+            LabelPos(:,3) = repmat(round(nvobj.Panel1.Position(3) * 0.1 * 0.9),nvobj.CalPanel1ComponnetPos.NumComponent,1);
+            LabelPos(:,4) = ComponentPos(:,4);
+            
+            
+            nvobj.LabelDispalyMode.Position = LabelPos(1,:);
+            nvobj.DropDownDispalyMode.Position = ComponentPos(1,:);
+            
+            nvobj.LabelSetFreq.Position =  LabelPos(2,:);
+            nvobj.EditFieldSetFreq.Position = ComponentPos(2,:);
+            
+            nvobj.LabelSetThreshold.Position =  LabelPos(3,:);
+            %Slider对象的高度(横放时)不能调
+            ComponentPos(3,2) = round(ComponentPos(3,2)+ ComponentPos(3,4)/2 +10);
+            ComponentPos(3,4) = 3;
+            nvobj.SliderSetThreshold.InnerPosition = ComponentPos(3,:);
+            %             nvobj.SliderSetThreshold.OuterPosition = ComponentPos(3,:);
+            
+        end
+        
+        
+        
+        function nvobj = SetPanel3ComponentPos(nvobj)
+            
+            nvobj.CalPanel3ComponnetPos.ParentPosition = nvobj.Panel3.Position;
+            ComponentPos = nvobj.CalPanel3ComponnetPos.ComponentPosition;
+            %因为Panel上方有标题
+            ComponentPos(:,2) = ComponentPos(:,2) - 20;
+
+            nvobj.ButtonShowAll.Position = ComponentPos(1,:);
+            
+
+            nvobj.ButtonHideAll.Position = ComponentPos(2,:);
+
+            nvobj.ButtonDefault.Position = ComponentPos(3,:);
+          
+            
+        end
+        
+        
     end
 end
-
-
-
-
-
-
-
-
-
 
 
 
