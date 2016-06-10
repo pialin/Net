@@ -29,7 +29,10 @@ classdef NetView < matlab.apps.AppBase
         SliderSetThreshold matlab.ui.control.Slider
         ButtonShowAll matlab.ui.control.Button 
         ButtonHideAll matlab.ui.control.Button 
-        ButtonDefault matlab.ui.control.Button 
+        ButtonDefault matlab.ui.control.Button
+        
+        UIAxesNetGraph matlab.ui.control.UIAxes
+        UIAxesSelectedGraph matlab.ui.control.UIAxes
         
         CalPanel1ComponnetPos ApplyVerizon
         CalPanel3ComponnetPos ApplyVerizon
@@ -83,6 +86,7 @@ classdef NetView < matlab.apps.AppBase
             SetPanelPos(nvobj);
             SetPanel1ComponentPos(nvobj);
             SetPanel3ComponentPos(nvobj);
+            SetGrpahPos(nvobj);
             
         end
     end
@@ -156,6 +160,7 @@ classdef NetView < matlab.apps.AppBase
             nvobj.LabelDispalyMode.VerticalAlignment = 'center';
             nvobj.LabelDispalyMode.FontName = 'Helvetica';
             nvobj.LabelDispalyMode.Text = 'Mode';
+            nvobj.LabelDispalyMode.FontSize = round(0.2 * nvobj.Panel1.Position(4)*0.2*0.5);
             
             % Create DisplayMode
             nvobj.DropDownDispalyMode = uidropdown(nvobj.Panel1);
@@ -168,6 +173,7 @@ classdef NetView < matlab.apps.AppBase
             nvobj.LabelSetFreq.VerticalAlignment = 'center';
             nvobj.LabelSetFreq.FontName = 'Helvetica';
             nvobj.LabelSetFreq.Text = 'Frequency';
+            nvobj.LabelSetFreq.FontSize = round(0.2 * nvobj.Panel1.Position(4)*0.2*0.5);
             
             % Create SetFreq
             nvobj.EditFieldSetFreq = uieditfield(nvobj.Panel1, 'text');
@@ -180,6 +186,8 @@ classdef NetView < matlab.apps.AppBase
             nvobj.LabelSetThreshold.VerticalAlignment = 'center';
             nvobj.LabelSetThreshold.Text = 'Threshold';
             nvobj.LabelSetThreshold.FontName = 'Helvetica';
+            nvobj.LabelSetThreshold.FontSize = round(0.2 * nvobj.Panel1.Position(4)*0.2*0.5);
+            
             % Create SetThreshold
             nvobj.SliderSetThreshold = uislider(nvobj.Panel1);
             nvobj.SliderSetThreshold.FontName = 'Helvetica';
@@ -214,20 +222,36 @@ classdef NetView < matlab.apps.AppBase
                 'InternalMargin',0.5,'ExternalMargin',1.5,'ComponentSizeX',[0.5,0.5,0.5],...
                 'ComponentSizeY',[0.1,0.1,0.1]);
             
-            nvobj = SetPanel3ComponentPos(nvobj);
+            SetPanel3ComponentPos(nvobj);
             
-            
-            %             nvobj.Button.Position = [71 98 100 22];
-            %
-            %             %%
-            %             % Create UIAxes
-            %             nvobj.UIAxes = uiaxes(nvobj.Panel);
-            %             title(nvobj.UIAxes, 'Title');
-            %             xlabel(nvobj.UIAxes, 'X');
-            %             ylabel(nvobj.UIAxes, 'Y');
-            %             nvobj.UIAxes.Position = [64 109 300 185];
-            
-            
+
+            %%
+            % Create UIAxes
+            nvobj.UIAxesNetGraph = uiaxes(nvobj.Panel1);
+%             title(nvobj.UIAxesNetGraph, 'Title');
+%             xlabel(nvobj.UIAxesNetGraph, 'X');
+%             ylabel(nvobj.UIAxesNetGraph, 'Y');
+%             axis off; 
+t = 0:pi/20:2*pi;
+l = plot(t,sin(t));
+l.LineWidth = 1;
+l.Color = [0 0 0];
+l.Parent = nvobj.UIAxesNetGraph;
+l.LineJoin = 'round';
+l.ButtonDownFcn ={@() disp('clicked')};
+% line(t+.06,sin(t),...
+%     'LineWidth',1,...
+%     'Color',[0  0 0],...
+%     'Parent',nvobj.UIAxesNetGraph);
+
+
+            % Create UIAxes
+            nvobj.UIAxesSelectedGraph = uiaxes(nvobj.Panel2);
+%             title(nvobj.UIAxesNetGraph, 'Title');
+%             xlabel(nvobj.UIAxesNetGraph, 'X');
+%             ylabel(nvobj.UIAxesNetGraph, 'Y');
+            axis(nvobj.UIAxesSelectedGraph,'off'); 
+            SetGraphPos(nvobj);            
             
         end
     end
@@ -338,6 +362,23 @@ classdef NetView < matlab.apps.AppBase
             nvobj.ButtonDefault.Position = ComponentPos(3,:);
           
             
+        end
+        
+        function SetGraphPos(nvobj)
+            nxAxes = (nvobj.Panel1.Position(4)-20)/nvobj.Panel1.Position(3)*0.8;
+            NormalizedPosition = [(1-nxAxes)/2,0.1,nxAxes,0.8];
+            nvobj.UIAxesNetGraph.Position = [ NormalizedPosition(1)*nvobj.Panel1.Position(3),...
+                                            NormalizedPosition(2)*(nvobj.Panel1.Position(4)-20),...
+                                            NormalizedPosition(3)*nvobj.Panel1.Position(3),...
+                                            NormalizedPosition(4)*(nvobj.Panel1.Position(4)-20)];
+            nyAxes = nvobj.Panel2.Position(3)/(nvobj.Panel2.Position(4)-20)*0.8;
+            NormalizedPosition = [0.1,(1-nyAxes)/2,0.8,nyAxes];
+            nvobj.UIAxesSelectedGraph.Position = [NormalizedPosition(1)*nvobj.Panel2.Position(3),...
+                                            NormalizedPosition(2)*(nvobj.Panel2.Position(4)-20),...
+                                            NormalizedPosition(3)*nvobj.Panel2.Position(3),...
+                                            NormalizedPosition(4)*(nvobj.Panel2.Position(4)-20)];
+                                            
+        
         end
         
         

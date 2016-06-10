@@ -34,6 +34,7 @@ x=-0.4550+0.038*cos(t);
 y=-0.0255+0.1*sin(t);
 plot(x,y)
 %%
+load ChannelInfo;
 figure;
 hold on;
 axis([-0.6 0.6 -0.6 0.6]);

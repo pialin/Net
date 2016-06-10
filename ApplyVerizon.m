@@ -34,6 +34,13 @@ classdef ApplyVerizon < handle
     methods
         function avobj = ApplyVerizon(varargin)
             
+            avobj = validInputArgument(avobj,varargin);
+            
+            avobj.NumComponent  = numel(avobj.ComponentSizeX);
+            
+        end
+        function avobj = validInputArgument(avobj,InputArgument)
+            
             ArgValidation = inputParser;
             ArgValidation.CaseSensitive = false;
             ArgValidation.FunctionName = 'ApplyVerizonCreator';
@@ -59,7 +66,7 @@ classdef ApplyVerizon < handle
             addParameter(ArgValidation,'ComponentSizeX',@(nx)validateattributes(nx,{'numeric'},{'>=',0,'<=',1}));
             addParameter(ArgValidation,'ComponentSizeY',@(nx)validateattributes(nx,{'numeric'},{'>=',0,'<=',1}));
             
-            parse(ArgValidation,varargin{:});
+            parse(ArgValidation,InputArgument{:});
             
             avobj.ApplyDirection = validatestring(ArgValidation.Results.ApplyDirection,{'Horizontal','Vertical'});
             avobj.ParentPosition = ArgValidation.Results.ParentPosition;
@@ -88,12 +95,7 @@ classdef ApplyVerizon < handle
                 avobj.InternalMargin = reshape(ArgValidation.Results.InternalMargin,1,[]);
             else
                 error('Illegal input argument ''InternalMargin''.');
-            end
-            
-            
-            
-            avobj.NumComponent  = numel(avobj.ComponentSizeX);
-            
+            end    
         end
         
         function ComponentPosition = get.ComponentPosition(avobj)
